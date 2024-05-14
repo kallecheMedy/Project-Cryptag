@@ -3,40 +3,47 @@ import tkinter as tk
 import webbrowser
 from tkinter import messagebox, filedialog
 
-# Clé de chiffrement (décalage)
-decalage = 3
-
 # Fonction de cryptage
 def cryptage(message):
+    alphabet_normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    alphabet_inverse = alphabet_normal[::-1]
+    alphabet_decale = alphabet_inverse[3:] + alphabet_inverse[:3]
+    
     message_crypte = ""
-    for caractere in message:
-        if ord(caractere) >= 32 and ord(caractere) <= 126:  # Vérifier si le caractère est imprimable
-            index = ord(caractere) - 32  # Décalage par rapport au premier caractère imprimable
-            index_crypte = (index + decalage) % 95  # 95 caractères imprimables ASCII de l'espace à ~
-            caractere_crypte = chr(index_crypte + 32)  # Décaler à nouveau pour obtenir le caractère crypté
-            message_crypte += caractere_crypte
+    
+    for lettre in message:
+        if lettre.isalpha() and lettre.isupper():
+            index_normal = alphabet_normal.index(lettre)
+            lettre_cryptee = alphabet_decale[index_normal]
+            message_crypte += lettre_cryptee
         else:
-            message_crypte += caractere
+            message_crypte += lettre
+    
     return message_crypte
 
 # Fonction de décryptage
 def decryptage(message_crypte):
+    alphabet_normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    alphabet_inverse = alphabet_normal[::-1]
+    alphabet_decale = alphabet_inverse[3:] + alphabet_inverse[:3]
+    
     message_decrypte = ""
-    for caractere in message_crypte:
-        if ord(caractere) >= 32 and ord(caractere) <= 126:  # Vérifier si le caractère est imprimable
-            index = ord(caractere) - 32  # Décalage par rapport au premier caractère imprimable
-            index_decrypte = (index - decalage) % 95  # 95 caractères imprimables ASCII de l'espace à ~
-            caractere_decrypte = chr(index_decrypte + 32)  # Décaler à nouveau pour obtenir le caractère décrypté
-            message_decrypte += caractere_decrypte
+    
+    for lettre in message_crypte:
+        if lettre.isalpha() and lettre.isupper():
+            index_decale = alphabet_decale.index(lettre)
+            lettre_decryptee = alphabet_normal[index_decale]
+            message_decrypte += lettre_decryptee
         else:
-            message_decrypte += caractere
+            message_decrypte += lettre
+    
     return message_decrypte
 
 # Fonction pour enregistrer le fichier crypté
 def enregistrer_fichier_crypte(contenu_crypte):
     file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Fichiers texte", "*.txt")])
     if file_path:
-        with open(file_path, "w") as file:
+        with open(file_path, "wb") as file:
             file.write(contenu_crypte)
         messagebox.showinfo("Sauvegarde réussie", "Le fichier crypté a été enregistré avec succès.")
 
@@ -53,55 +60,47 @@ def quitter_application():
         fenetre.quit()
 
 def ouvrir_page_web():
-    # Chemin absolu du fichier HTML local
-    path = os.path.abspath("C:\\Users\\kalleche_m\\Desktop\\python-cryptage\\web\\help.html")
-    # Ouvrir le fichier HTML dans Microsoft Edge
-    webbrowser.open("file://" + path)
+    webbrowser.open("https://votresite.com/aide")
 
 def ouvrir_page_about():
-    path = os.path.abspath("C:\\Users\\kalleche_m\\Desktop\\python-cryptage\\web\\àproposde.html")
+    path = os.path.abspath("C:\\Users\\walid\\Desktop\\python-cryptage\\àproposde.html")
     webbrowser.open("file://" + path)
 
 # Fonction pour crypter le fichier
 def crypter_message():
-    print("Cryptage en cours...")
     file_path = filedialog.askopenfilename(filetypes=[("Fichiers texte", "*.txt")])
     if file_path:
         with open(file_path, "r") as file:
             contenu = file.read()
             contenu_crypte = cryptage(contenu)
-        file_path_crypte = file_path[:-4] + "_crypte.txt"  # Nom du nouveau fichier crypté
-        with open(file_path_crypte, "w") as file_crypte:
-            file_crypte.write(contenu_crypte)
-        label_resultat.config(text="Le contenu du fichier texte a été crypté avec succès.")
+            if messagebox.askyesno("Enregistrer le fichier crypté", "Voulez-vous enregistrer le fichier crypté ?"):
+                enregistrer_fichier_crypte(contenu_crypte.encode("utf-8"))  # Encodez le contenu crypté en UTF-8
+            label_resultat.config(text="Le Contenu du fichier texte crypté à 100% ;) ")
 
 # Fonction pour décrypter le fichier
 def decrypter_message():
-    print("Décryptage en cours...")
     file_path = filedialog.askopenfilename(filetypes=[("Fichiers texte", "*.txt")])
     if file_path:
-        with open(file_path, "r") as file:
-            contenu_crypte = file.read()
+        with open(file_path, "rb") as file:  # Ouvrez le fichier en mode binaire
+            contenu_crypte = file.read().decode("utf-8")  # Décodage du contenu en UTF-8
             contenu_decrypte = decryptage(contenu_crypte)
-        file_path_decrypte = file_path[:-4] + "_decrypte.txt"  # Nom du nouveau fichier décrypté
-        with open(file_path_decrypte, "w") as file_decrypte:
-            file_decrypte.write(contenu_decrypte)
-        label_resultat.config(text="Le contenu du fichier texte a été décrypté avec succès.")
-
+            if messagebox.askyesno("Enregistrer le fichier décrypté", "Voulez-vous enregistrer le fichier décrypté ?"):
+                enregistrer_fichier_decrypte(contenu_decrypte)
+            label_resultat.config(text="Le Contenu du fichier texte décrypté à 100% ;) ")
 
 fenetre = tk.Tk()
 fenetre.title("Cryps Software")
 
-image = tk.PhotoImage(file=r"C:\Users\kalleche_m\Desktop\python-cryptage\img\Crips.png")
+image = tk.PhotoImage(file=r"C:\Users\walid\Desktop\python-cryptage\Crips.png")
 fenetre.iconphoto(True, image)
 
 barre_menu = tk.Menu(fenetre)
 
 onglet_cryps = tk.Menu(barre_menu, tearoff=0)
-onglet_cryps.add_command(label="Crypter le fichier", command=crypter_message)
-onglet_cryps.add_command(label="Décrypter le fichier", command=decrypter_message)
+onglet_cryps.add_command(label="Crypter le fichier         CTRL+F", command=crypter_message)
+onglet_cryps.add_command(label="Décrypter le fichier      CTRL+D", command=decrypter_message)
 onglet_cryps.add_separator()
-onglet_cryps.add_command(label="Quitter", command=quitter_application)
+onglet_cryps.add_command(label="Quitter                          ALT+F4", command=quitter_application)
 barre_menu.add_cascade(label="Cryps", menu=onglet_cryps)
 
 onglet_help = tk.Menu(barre_menu, tearoff=0)
@@ -122,18 +121,18 @@ couleur_bouton = "#E2E2E2"
 cadre_gris = tk.Frame(fenetre, bg=couleur_bouton)
 cadre_gris.pack(fill=tk.X, padx=5, pady=(0, 5))
 
-image_crypter = tk.PhotoImage(file=r"C:\Users\kalleche_m\Desktop\python-cryptage\img\crypter.png")
+image_crypter = tk.PhotoImage(file=r"C:\Users\walid\Desktop\python-cryptage\crypter.png")
 bouton_crypter = tk.Button(cadre_gris, image=image_crypter, text="Crypter le document", compound=tk.TOP, command=crypter_message, bg=couleur_bouton)
 bouton_crypter.grid(row=0, column=0, padx=10, pady=5)
 
 barre_verticale = tk.Canvas(cadre_gris, bg="#AAAAAA", bd=0, highlightthickness=0, width=2, height=50)
 barre_verticale.grid(row=0, column=1, sticky="ns", pady=5)
 
-image_decrypter = tk.PhotoImage(file=r"C:\Users\kalleche_m\Desktop\python-cryptage\img\décrypter.png")
+image_decrypter = tk.PhotoImage(file=r"C:\Users\walid\Desktop\python-cryptage\décrypter.png")
 bouton_decrypter = tk.Button(cadre_gris, image=image_decrypter, text="Décrypter le document", compound=tk.TOP, command=decrypter_message, bg=couleur_bouton)
 bouton_decrypter.grid(row=0, column=2, padx=10, pady=5)
 
-image_help = tk.PhotoImage(file=r"C:\Users\kalleche_m\Desktop\python-cryptage\img\help.png") 
+image_help = tk.PhotoImage(file=r"C:\Users\walid\Desktop\python-cryptage\help.png") 
 bouton_help = tk.Button(fenetre, image=image_help, command=ouvrir_page_web)
 bouton_help.pack(side=tk.RIGHT, anchor=tk.SE, padx=10, pady=10)
 
