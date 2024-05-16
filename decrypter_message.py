@@ -5,7 +5,6 @@ def decrypter_message():
         with open(file_path, "r") as file:
             contenu_crypte = file.read()
             contenu_decrypte = decryptage(contenu_crypte)
-        file_path_decrypte = file_path[:-4] + "_decrypte.txt"  # Nom du nouveau fichier décrypté
-        with open(file_path_decrypte, "w") as file_decrypte:
-            file_decrypte.write(contenu_decrypte)
+        with open(file_path, "w") as file:  # Utilisation de "w" pour écraser le contenu existant
+            file.write(contenu_decrypte)
         label_resultat.config(text="Le contenu du fichier texte a été décrypté avec succès.")
