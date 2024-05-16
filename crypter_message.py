@@ -5,7 +5,6 @@ def crypter_message():
         with open(file_path, "r") as file:
             contenu = file.read()
             contenu_crypte = cryptage(contenu)
-        file_path_crypte = file_path[:-4] + "_crypte.txt"  # Nom du nouveau fichier crypté
-        with open(file_path_crypte, "w") as file_crypte:
-            file_crypte.write(contenu_crypte)
+        with open(file_path, "w") as file:  # Utilisation de "w" pour écraser le contenu existant
+            file.write(contenu_crypte)
         label_resultat.config(text="Le contenu du fichier texte a été crypté avec succès.")
