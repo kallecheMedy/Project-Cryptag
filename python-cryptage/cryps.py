@@ -79,12 +79,10 @@ def crypter_message():
         with open(file_path, "r") as file:
             contenu = file.read()
             contenu_crypte = cryptage(contenu)
-        file_path_crypte = file_path[:-4] + "_crypte.txt"  # Nom du nouveau fichier crypté
-        with open(file_path_crypte, "w") as file_crypte:
-            file_crypte.write(contenu_crypte)
+        with open(file_path, "w") as file:  # Utilisation de "w" pour écraser le contenu existant
+            file.write(contenu_crypte)
         label_resultat.config(text="Le contenu du fichier texte a été crypté avec succès.")
 
-# Fonction pour décrypter le fichier
 def decrypter_message():
     print("Décryptage en cours...")
     file_path = filedialog.askopenfilename(filetypes=[("Fichiers texte", "*.txt")])
@@ -92,10 +90,10 @@ def decrypter_message():
         with open(file_path, "r") as file:
             contenu_crypte = file.read()
             contenu_decrypte = decryptage(contenu_crypte)
-        file_path_decrypte = file_path[:-4] + "_decrypte.txt"  # Nom du nouveau fichier décrypté
-        with open(file_path_decrypte, "w") as file_decrypte:
-            file_decrypte.write(contenu_decrypte)
+        with open(file_path, "w") as file:  # Utilisation de "w" pour écraser le contenu existant
+            file.write(contenu_decrypte)
         label_resultat.config(text="Le contenu du fichier texte a été décrypté avec succès.")
+
 
 fenetre = tk.Tk()
 fenetre.title("Cryps Software")
